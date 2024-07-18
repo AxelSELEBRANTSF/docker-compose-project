@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # Service pour le container backend
   adonisjs-app:
     build:
       context: ./back
@@ -9,6 +10,7 @@ services:
     volumes: 
       -  ./back:/app
       -  /app/node_modules  
+    # Variable d'environnement correspondant au .env dans le back
     environment:
       DB_CONNECTION: pg
       DB_HOST: postgresql
@@ -23,6 +25,7 @@ services:
       - docker-project
     restart: always
 
+  # Service pour le container frontend
   react-app:
     build:
       context: ./front
@@ -38,9 +41,11 @@ services:
       - docker-project
     restart: always
 
+  # Service pour le container postgresql
   postgresql:
     image: postgres:13
     environment:
+      # A modifier pour une meilleure sécuriter
       POSTGRES_USER: adonis
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: adonis
@@ -49,12 +54,18 @@ services:
     networks:
       - docker-project
     volumes:
+      # Sauvegarde des données + création des tables
+      # lorsque le container est down
       - postgresql-data:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
+# Création du volume pour la base de données
 volumes:
   postgresql-data:
 
+# Création du network pour mettre les containers 
+# dans un même réseau afin qu'il puisse communiquer
+# plus facilement entre eux.
 networks:
   docker-project:
     driver: bridge

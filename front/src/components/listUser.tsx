@@ -9,6 +9,8 @@ type User = {
 
 const UserList = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -45,15 +47,64 @@ const UserList = () => {
     }
   };
 
-    const handleModifyUser = async (id: number) => {
-        // Implement modification logic as needed
-        console.log(`Modify user with id ${id}`);
-    };
+  const handleModifyUser = async (id: number) => {
+    const user = users.find(user => user.id === id);
+    if (user) {
+      setEditingUser(user);
+      setIsEditing(true);
+    }
+  };
+
+  const handleSaveUser = async () => {
+    if (editingUser) {
+      try {
+        const response = await fetch(`http://127.0.0.1:3333/users/${editingUser.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(editingUser),
+        });
+        if (response.ok) {
+          const updatedUser = await response.json();
+          setUsers(users.map(user => (user.id === updatedUser.id ? updatedUser : user)));
+          setIsEditing(false);
+          setEditingUser(null);
+          console.log(`User with id ${editingUser.id} updated successfully`);
+        } else {
+          console.error(`Failed to update user with id ${editingUser.id}:`, response.statusText);
+        }
+      } catch (error) {
+        console.error(`Error updating user with id ${editingUser.id}:`, error);
+      }
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (editingUser) {
+      setEditingUser({ ...editingUser, [e.target.name]: e.target.value });
+    }
+  };
 
   return (
     <div>
-        <Link to={"/create_user"}>Crée un utilisateur</Link>
+      <Link to={"/create_user"}>Crée un utilisateur</Link>
       <h2>Liste des Utilisateurs</h2>
+      {isEditing && editingUser && (
+        <div>
+          <h3>Modifier l'utilisateur</h3>
+          <label>
+            Pseudo:
+            <input type="text" name="username" value={editingUser.username} onChange={handleChange} />
+          </label>
+          <label>
+            Email:
+            <input type="email" name="email" value={editingUser.email} onChange={handleChange} />
+          </label>
+          <button onClick={handleSaveUser}>Save</button>
+          <button onClick={() => { setIsEditing(false); setEditingUser(null); }}>Cancel</button>
+        </div>
+      )}
       <table>
         <thead>
           <tr>
