@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  adonisjs-app:
+    build:
+      context: ./back
+    ports:
+      - '3333:3333'
+    volumes: 
+      -  ./back:/app
+      -  /app/node_modules  
+    environment:
+      DB_CONNECTION: pg
+      DB_HOST: postgresql
+      DB_PORT: 5432
+      DB_USER: adonis
+      DB_PASSWORD: secret
+      DB_DATABASE: adonis
+      HOST: 0.0.0.0
+    depends_on:
+      - postgresql
+    networks:
+      - docker-project
+    restart: always
+
+  react-app:
+    build:
+      context: ./front
+    ports:
+      - '5000:5000'
+    environment:
+      NODE_ENV: development
+      URL_API: http://127.0.0.1:3333/
+    volumes:
+      -  ./front:/app
+      -  /app/node_modules
+    networks:
+      - docker-project
+    restart: always
+
+  postgresql:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: adonis
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: adonis
+    ports:
+      - '5432:5432'
+    networks:
+      - docker-project
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql 
+
+volumes:
+  postgresql-data:
+
+networks:
+  docker-project:
+    driver: bridge
