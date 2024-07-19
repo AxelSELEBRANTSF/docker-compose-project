@@ -24,3 +24,10 @@
   DB_DATABASE=adonis
   DB_CONNECTION=pg
 ```
+
+## Pour accéder à l'application:
+
+```bash
+  http://127.0.0.1:5000 # pour le front
+  http://127.0.0.1:3333 # pour le back
+```
