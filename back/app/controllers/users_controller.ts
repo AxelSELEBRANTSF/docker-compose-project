@@ -4,7 +4,7 @@
 
   export default class UsersController {
     /**
-     * Create a new user.
+     * Créer un utilisateur
      */
       async create({ request, response }: HttpContext) {
           try {
@@ -15,7 +15,7 @@
               email,
               username,
               password,
-              role: 0, // Assuming 'role' is a field in your User model
+              role: 0, 
             })
         
             return response.status(201).json({ message: 'User created', user })
@@ -25,7 +25,7 @@
       }
 
     /**
-     * Get all users.
+     * Liste de tous les utilisateurs
      */
       async index({ response }: HttpContext) {
           try {
@@ -38,7 +38,7 @@
       }
 
     /**
-     * Get a single user by ID.
+     * Retourne un utilisateur en fonction de l'ID
      */
       async show({ params, response }: HttpContext) {
           try {
@@ -51,7 +51,7 @@
       }
 
     /**
-     * Update a user by ID.
+     * Met à jour un utilisateur
      */
       async update({ params, request, response }: HttpContext) {
           try {
@@ -68,7 +68,7 @@
       }
 
     /**
-     * Delete a user by ID.
+     * Supprime un utilisateur par son ID
      */
       async destroy({ params, response }: HttpContext) {
           try {

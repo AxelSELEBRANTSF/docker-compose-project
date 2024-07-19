@@ -1,13 +1,20 @@
-    FROM node:18-alpine
+# Utiliser une image officielle de Node.js comme image de base
+FROM node:18-alpine
 
-    WORKDIR /app
+# Définir le répertoire de travail
+WORKDIR /app
 
-    COPY package.json pnpm-lock.yaml ./
+# Copier les fichiers de configuration des dépendances
+COPY package.json pnpm-lock.yaml ./
 
-    RUN npm install
+# Installer les dépendances
+RUN npm install
 
-    COPY . .
+# Copier le reste du code de l'application
+COPY . .
 
-    EXPOSE 5000
+# Exposer le port 5000
+EXPOSE 5000
 
-    CMD ["npm", "run", "dev"]
+# Commande pour démarrer le serveur en mode développement
+CMD ["npm", "run", "dev"]
